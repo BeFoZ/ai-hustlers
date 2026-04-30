@@ -47,3 +47,9 @@ server/vector_index/*.npy
 *.njsproj
 *.sln
 *.sw?
+
+
+backend/.venv
+backend/__pycache__
+backend/ai-hustlers_key.pem
+backend/.env
