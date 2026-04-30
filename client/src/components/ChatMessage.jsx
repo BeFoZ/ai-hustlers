@@ -4,13 +4,11 @@ export default function ChatMessage({ message }) {
   const isUser = message.author === "user"
 
   return (
-    <div className={`chat-message ${isUser ? "user" : "assistant"}`}>
-      <div className="message-content">
-        <div className="message-author">{isUser ? "Ти" : "CampusMate AI"}</div>
-        <div className="message-text">{message.text}</div>
-        {message.source || message.category ? (
-          <SourceBadge source={message.source} category={message.category} />
-        ) : null}
+    <div className={`msg ${isUser ? "user" : "bot"}`}>
+      <div className={`msg-av ${isUser ? "user-av" : "bot-av"}`}>{isUser ? "Ти" : "AI"}</div>
+      <div className="bubble">
+        <div>{message.text}</div>
+        {!isUser && message.sources?.length ? <SourceBadge sources={message.sources} /> : null}
       </div>
     </div>
   )
