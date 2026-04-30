@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { sendChatMessage } from "../api/chatApi"
 
-const USE_MOCK = true
+const USE_MOCK = false
 const MOCK_ANSWER =
   "Це тестова відповідь CampusMate AI. У повній версії відповідь буде сформована на основі RAG + FAISS бази знань."
 
