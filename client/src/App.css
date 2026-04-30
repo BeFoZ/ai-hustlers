@@ -608,6 +608,232 @@ body {
   line-height: 1.7;
 }
 
+.category-grid,
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.category-card,
+.help-card,
+.check-item,
+.category-detail-card,
+.checklist-card,
+.help-detail-card,
+.info-aside,
+.applicant-main,
+.freshman-left,
+.freshman-right {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.category-card,
+.help-card {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 18px;
+  padding: 18px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.category-card:hover,
+.help-card:hover,
+.category-card.active,
+.help-card.active {
+  background: #eff6ff;
+  box-shadow: 0 18px 40px rgba(14, 165, 233, 0.12);
+  transform: translateY(-1px);
+  border-color: rgba(14, 165, 233, 0.35);
+}
+
+.category-detail-card,
+.checklist-card,
+.help-detail-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 20px 46px rgba(15, 23, 42, 0.05);
+}
+
+.category-detail-header,
+.progress-summary,
+.progress-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-detail-header {
+  margin-bottom: 14px;
+  gap: 16px;
+}
+
+.category-detail-card h3,
+.help-detail-card h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.category-detail-card p,
+.help-detail-card p {
+  color: #475569;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.detail-list {
+  list-style: disc;
+  padding-left: 20px;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.detail-list li {
+  margin-bottom: 10px;
+}
+
+.secondary-btn,
+.primary-btn {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  background: var(--blue-accent);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #dbeafe;
+}
+
+.secondary-btn:hover,
+.primary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.prompt-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #0f172a;
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+.info-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checklist-card,
+.help-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-item {
+  background: #f8fafc;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.check-item.checked {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.progress-summary {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+  border-radius: 999px;
+}
+
+.help-detail-card {
+  min-height: 150px;
+}
+
+.help-card {
+  text-align: center;
+  padding: 18px 14px;
+}
+
+.help-card.active {
+  background: #dbeafe;
+}
+
+.panel-columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.applicant-main,
+.freshman-left,
+.freshman-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.freshman-right {
+  min-width: 0;
+}
+
+.category-detail-card .secondary-btn {
+  margin-left: auto;
+}
+
+.typewriter-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 1.3em;
+}
+
+.info-panel article,
+.category-detail-card,
+.help-detail-card,
+.checklist-card {
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+@media (max-width: 1100px) {
+  .panel-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
 .calendar-list {
   display: grid;
   gap: 18px;
