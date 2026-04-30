@@ -359,13 +359,25 @@ body {
 .assistant-loading {
   align-self: flex-start;
   display: flex;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  background: rgba(14, 165, 233, 0.08);
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(14, 165, 233, 0.12);
   color: #0369a1;
-  font-size: 13px;
-  min-width: 80px;
+  font-size: 14px;
+  min-width: 220px;
+  max-width: 100%;
+}
+
+.assistant-loading-text {
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 8px;
 }
 
 .loading-dot {

@@ -82,7 +82,9 @@ export default function useChat(mode) {
       }
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      setError("Не вдалося отримати відповідь. Спробуйте пізніше.")
+      setError(
+        "Не вдалося отримати відповідь від сервера. Перевірте, чи запущено backend на localhost:8000."
+      )
     } finally {
       setLoading(false)
     }
