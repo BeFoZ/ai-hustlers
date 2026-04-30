@@ -8,3 +8,15 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     answer: str
+
+
+class CalendarEvent(BaseModel):
+    time: str
+    title: str
+    description: Optional[str] = None
+    location: Optional[str] = None
+
+
+class CalendarEventsResponse(BaseModel):
+    date: str
+    events: List[CalendarEvent]

@@ -1,10 +1,13 @@
-import { useMemo, useState } from "react"
+import { useMemo, useEffect, useState } from "react"
 
 const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
 
 export default function CalendarPanel() {
   const today = useMemo(() => new Date(), [])
   const [selectedDate, setSelectedDate] = useState(today)
+  const [events, setEvents] = useState([])
+  const [eventsLoading, setEventsLoading] = useState(false)
+  const [eventsError, setEventsError] = useState(null)
 
   const year = today.getFullYear()
   const month = today.getMonth()
@@ -13,6 +16,49 @@ export default function CalendarPanel() {
   const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7
 
   const days = Array.from({ length: daysInMonth }, (_, index) => index + 1)
+
+  const selectedDateKey = useMemo(() => {
+    const year = selectedDate.getFullYear()
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0")
+    const day = String(selectedDate.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
+  }, [selectedDate])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadEvents() {
+      setEventsLoading(true)
+      setEventsError(null)
+
+      try {
+        const response = await fetch(`/api/calendar-events?date=${selectedDateKey}`)
+        if (!response.ok) {
+          throw new Error("Server error")
+        }
+
+        const payload = await response.json()
+        if (!cancelled) {
+          setEvents(payload.events ?? [])
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setEventsError("Не вдалося завантажити події. Спробуйте пізніше.")
+          setEvents([])
+        }
+      } finally {
+        if (!cancelled) {
+          setEventsLoading(false)
+        }
+      }
+    }
+
+    loadEvents()
+
+    return () => {
+      cancelled = true
+    }
+  }, [selectedDateKey])
 
   const selectedLabel = selectedDate.toLocaleDateString("uk-UA", {
     weekday: "long",
@@ -76,6 +122,40 @@ export default function CalendarPanel() {
       <div className="selected-copy">
         <p>Обрана дата:</p>
         <strong>{selectedLabel}</strong>
+      </div>
+
+      <div className="event-panel">
+        <div className="event-panel-header">
+          <div>
+            <p className="eyebrow">Розклад дня</p>
+            <h3>Події на обрану дату</h3>
+          </div>
+          <span className="calendar-month">{selectedDateKey}</span>
+        </div>
+
+        {eventsLoading ? (
+          <p className="event-status">Завантаження подій…</p>
+        ) : eventsError ? (
+          <p className="event-status error">{eventsError}</p>
+        ) : events.length === 0 ? (
+          <div className="event-empty">
+            <h3>Нічого не заплановано</h3>
+            <p>На обрану дату немає жодних подій. Спробуйте обрати інший день або плануйте свій час.</p>
+          </div>
+        ) : (
+          <div className="event-list">
+            {events.map((event, index) => (
+              <article key={`${selectedDateKey}-${event.time}-${index}`} className="event-item">
+                <span className="event-time">{event.time}</span>
+                <div className="event-details">
+                  <h4>{event.title}</h4>
+                  <p>{event.description}</p>
+                  {event.location && <p className="event-location">{event.location}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
