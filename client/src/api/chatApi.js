@@ -15,23 +15,23 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export async function sendChatMessage(message, mode) {
+export async function sendChatMessage(message) {
   if (USE_MOCK_API) {
     await delay(900)
     return MOCK_RESPONSE
   }
 
-  // const response = await fetch("http://localhost:8000/api/chat", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({ message, mode }),
-  // })
-  //
-  // if (!response.ok) {
-  //   throw new Error("Не вдалося надіслати повідомлення")
-  // }
-  //
-  // return response.json()
+  const response = await fetch("http://localhost:8000/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message }),
+  })
+
+  if (!response.ok) {
+    throw new Error("Не вдалося надіслати повідомлення")
+  }
+
+  return response.json()
 }

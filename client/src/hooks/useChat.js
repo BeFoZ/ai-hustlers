@@ -54,7 +54,7 @@ export default function useChat(mode) {
     setMessages((prev) => [...prev, userMessage])
 
     try {
-      const response = await sendChatMessage(text, mode || "chat")
+      const response = await sendChatMessage(text)
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         author: "assistant",
