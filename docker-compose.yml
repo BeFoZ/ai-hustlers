@@ -1,18 +1,32 @@
+version: "3.9"
+
 services:
   backend:
     build:
       context: ./backend
-    container_name: ai-hustlers-backend
+    container_name: backend
     restart: unless-stopped
-    ports:
+    expose:
       - "8000:8000"
 
   client:
     build:
       context: ./client
-    container_name: ai-hustlers-client
+    container_name: client
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx
     restart: unless-stopped
     depends_on:
       - backend
+      - client
     ports:
       - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+
+      
