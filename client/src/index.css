@@ -109,3 +109,157 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+body {
+  background: #f7f8fc;
+}
+
+.app-shell {
+  padding: 32px 24px;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.hero-section {
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.hero-section h1 {
+  margin: 0;
+  font-size: 3rem;
+}
+
+.hero-section p {
+  margin: 8px 0 0;
+  color: var(--text);
+  max-width: 680px;
+}
+
+.chat-shell {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.chat-header {
+  margin-bottom: 18px;
+}
+
+.chat-header h2 {
+  margin: 0 0 4px;
+}
+
+.chat-window {
+  min-height: 320px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.chat-message {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+.message-content {
+  background: #f4f5fb;
+  border-radius: 18px;
+  padding: 14px 18px;
+  max-width: 70%;
+}
+
+.chat-message.user .message-content {
+  background: #dfe7ff;
+}
+
+.message-author {
+  font-size: 0.85rem;
+  color: #5b5d74;
+  margin-bottom: 8px;
+}
+
+.message-text {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  color: #14142b;
+}
+
+.chat-input-form {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0 14px;
+}
+
+.chat-input-form input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 1rem;
+}
+
+.chat-input-form button {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  background: #5b3bff;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-input-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.quick-questions {
+  margin-top: 8px;
+}
+
+.quick-questions p {
+  margin: 0 0 10px;
+  color: #5b5d74;
+}
+
+.quick-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-buttons button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.source-badge {
+  margin-top: 10px;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #5b5d74;
+}
+
+.source-badge small {
+  opacity: 0.8;
+}
+
+.chat-error {
+  color: #d32f2f;
+  margin-bottom: 16px;
+}
