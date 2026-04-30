@@ -1,9 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { sendChatMessage } from "../api/chatApi"
-
-const USE_MOCK = false
-const MOCK_ANSWER =
-  "Це тестова відповідь CampusMate AI. У повній версії відповідь буде сформована на основі RAG + FAISS бази знань."
 
 function getIntroText(mode) {
   if (mode === "applicant") {
@@ -21,6 +17,7 @@ export default function useChat(mode) {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const loadingRef = useRef(false)
 
   useEffect(() => {
     if (!mode) {
@@ -38,39 +35,23 @@ export default function useChat(mode) {
     ])
     setError(null)
     setLoading(false)
+    loadingRef.current = false
   }, [mode])
 
   async function sendMessage(text) {
+    if (loadingRef.current) return
     if (!text?.trim()) return
+
+    setError(null)
+    loadingRef.current = true
+    setLoading(true)
 
     const userMessage = {
       id: `user-${Date.now()}`,
       author: "user",
       text,
     }
-
     setMessages((prev) => [...prev, userMessage])
-    setLoading(true)
-    setError(null)
-
-    if (USE_MOCK) {
-      setTimeout(() => {
-        const assistantMessage = {
-          id: `assistant-${Date.now()}`,
-          author: "assistant",
-          text: MOCK_ANSWER,
-          sources: [
-            {
-              category: "База знань",
-              question: "MVP mock source",
-            },
-          ],
-        }
-        setMessages((prev) => [...prev, assistantMessage])
-        setLoading(false)
-      }, 900)
-      return
-    }
 
     try {
       const response = await sendChatMessage(text, mode || "chat")
@@ -86,6 +67,7 @@ export default function useChat(mode) {
         "Не вдалося отримати відповідь від сервера. Перевірте, чи запущено backend на localhost:8000."
       )
     } finally {
+      loadingRef.current = false
       setLoading(false)
     }
   }

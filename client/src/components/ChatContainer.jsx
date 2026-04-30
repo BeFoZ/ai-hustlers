@@ -20,7 +20,7 @@ export default function ChatContainer({ messages, loading, error, onSend }) {
         {loading && (
           <div className="assistant-loading" aria-live="polite">
             <div className="assistant-loading-text">
-              CampusMate AI шукає відповідь у базі знань...
+              CampusMate AI обробляє запит...
             </div>
             <div className="loading-dots">
               <span className="loading-dot" />

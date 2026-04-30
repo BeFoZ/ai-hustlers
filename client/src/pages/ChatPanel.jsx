@@ -30,7 +30,7 @@ export default function ChatPanel() {
         <p>Оберіть тему або напишіть своє питання — CampusMate відповість одразу.</p>
       </div>
 
-      <QuickQuestions questions={quickTopics} onQuestion={sendMessage} />
+      <QuickQuestions questions={quickTopics} onQuestion={sendMessage} disabled={loading} />
 
       <ChatContainer
         messages={messages}

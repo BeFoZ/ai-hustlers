@@ -2,10 +2,11 @@ import { useState } from "react"
 
 export default function ChatInput({ onSend, loading }) {
   const [value, setValue] = useState("")
+  const disabled = Boolean(loading)
 
   function handleSubmit(event) {
     event.preventDefault()
-    if (!value.trim()) return
+    if (disabled || !value.trim()) return
     onSend(value)
     setValue("")
   }
@@ -17,9 +18,9 @@ export default function ChatInput({ onSend, loading }) {
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder="Напишіть повідомлення..."
-        disabled={loading}
+        disabled={disabled}
       />
-      <button type="submit" disabled={loading || !value.trim()}>
+      <button type="submit" disabled={disabled || !value.trim()}>
         {loading ? "Надсилаю..." : "Відправити"}
       </button>
     </form>
