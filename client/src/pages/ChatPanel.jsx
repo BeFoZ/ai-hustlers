@@ -10,7 +10,7 @@ const quickTopics = [
 ]
 
 export default function ChatPanel() {
-  const { messages, sendMessage, loading, error } = useChat("chat")
+  const { messages, sendMessage, loading, error, clearChat, lastAnimatedId } = useChat("chat")
 
   return (
     <section className="panel chat-panel">
@@ -37,6 +37,8 @@ export default function ChatPanel() {
         loading={loading}
         error={error}
         onSend={sendMessage}
+        clearChat={clearChat}
+        lastAnimatedId={lastAnimatedId}
       />
     </section>
   )

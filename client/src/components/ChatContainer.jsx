@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef } from "react"
 import ChatInput from "./ChatInput"
 import ChatMessage from "./ChatMessage"
 
-export default function ChatContainer({ messages, loading, error, onSend }) {
+export default function ChatContainer({ messages, loading, error, onSend, clearChat, lastAnimatedId }) {
   const chatWindowRef = useRef(null)
 
   const lastAssistantId = useMemo(() => {
     const reversed = [...messages].reverse()
     const item = reversed.find(
-      (message) => message.author === "assistant" && message.id?.startsWith("assistant-")
+      (message) => message.role === "assistant" && message.id?.startsWith("assistant-")
     )
     return item?.id
   }, [messages])
@@ -21,12 +21,26 @@ export default function ChatContainer({ messages, loading, error, onSend }) {
 
   return (
     <div className="chat-container">
+      <div className="chat-header">
+        <button
+          className="clear-chat-btn"
+          onClick={() => {
+            if (window.confirm("Очистити історію чату?")) {
+              clearChat()
+            }
+          }}
+          disabled={loading}
+        >
+          Очистити чат
+        </button>
+      </div>
       <div className="chat-window" ref={chatWindowRef}>
         {messages.map((message) => {
           const animate =
             !loading &&
-            message.author === "assistant" &&
-            message.id === lastAssistantId
+            message.role === "assistant" &&
+            message.id === lastAssistantId &&
+            message.id === lastAnimatedId
 
           return <ChatMessage key={message.id} message={message} animate={animate} />
         })}
