@@ -1025,6 +1025,36 @@ body {
   margin-left: auto;
 }
 
+/* Clear Chat Button */
+.chat-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.clear-chat-btn {
+  background: var(--blue-accent);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.clear-chat-btn:hover:not(:disabled) {
+  background: var(--blue-bright);
+}
+
+.clear-chat-btn:disabled {
+  background: var(--gray-mid);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .typewriter-text {
   white-space: pre-wrap;
   word-break: break-word;

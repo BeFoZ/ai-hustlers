@@ -2,16 +2,16 @@ import { useEffect, useRef, useState } from "react"
 import SourceBadge from "./SourceBadge"
 
 export default function ChatMessage({ message, animate }) {
-  const isUser = message.author === "user"
+  const isUser = message.role === "user"
   const [displayText, setDisplayText] = useState(
-    !animate || isUser ? message.text : ""
+    !animate || isUser ? message.content : ""
   )
   const [showSources, setShowSources] = useState(!animate || isUser)
   const messageRef = useRef(null)
 
   useEffect(() => {
     if (!animate || isUser) {
-      setDisplayText(message.text)
+      setDisplayText(message.content)
       setShowSources(true)
       return
     }
@@ -21,8 +21,8 @@ export default function ChatMessage({ message, animate }) {
     setShowSources(false)
     const interval = window.setInterval(() => {
       index += 1
-      setDisplayText(message.text.slice(0, index))
-      if (index >= message.text.length) {
+      setDisplayText(message.content.slice(0, index))
+      if (index >= message.content.length) {
         window.clearInterval(interval)
         setShowSources(true)
       }
@@ -31,7 +31,7 @@ export default function ChatMessage({ message, animate }) {
     return () => {
       window.clearInterval(interval)
     }
-  }, [animate, isUser, message.text])
+  }, [animate, isUser, message.content])
 
   useEffect(() => {
     if (messageRef.current) {

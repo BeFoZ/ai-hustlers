@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import { sendChatMessage } from "../api/chatApi"
 import { loadChatMessages, saveChatMessages } from "../utils/chatStorage"
 
+const STORAGE_KEY = "campusmate-chat-messages"
+
 function getIntroText(mode) {
   if (mode === "applicant") {
     return "Вітаю! Я CampusMate AI. Я допоможу відповісти на питання про вступ, спеціальності та документи."
@@ -14,12 +16,33 @@ function getIntroText(mode) {
   return "Вітаю! Я CampusMate AI. Питайте про вступ, студентське життя та навчальні дати."
 }
 
-function buildIntroMessage(mode) {
+function getIntroMessage(mode) {
   return {
     id: `intro-${mode}`,
-    author: "assistant",
-    text: getIntroText(mode),
+    role: "assistant",
+    content: getIntroText(mode),
     sources: [],
+  }
+}
+
+function loadMessagesFromStorage(mode) {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return [getIntroMessage(mode)]
+    const parsed = JSON.parse(stored)
+    if (!Array.isArray(parsed) || parsed.length === 0) return [getIntroMessage(mode)]
+    return parsed
+  } catch (error) {
+    console.warn("Failed to load messages from localStorage:", error)
+    return [getIntroMessage(mode)]
+  }
+}
+
+function saveMessagesToStorage(messages) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+  } catch (error) {
+    console.warn("Failed to save messages to localStorage:", error)
   }
 }
 
@@ -35,6 +58,7 @@ export default function useChat(mode) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const loadingRef = useRef(false)
+  const [lastAnimatedId, setLastAnimatedId] = useState(null)
 
   useEffect(() => {
     if (!mode) {
@@ -42,20 +66,19 @@ export default function useChat(mode) {
       return
     }
 
-    const storedMessages = loadChatMessages(mode)
-    setMessages(storedMessages.length > 0 ? storedMessages : [buildIntroMessage(mode)])
+    const loadedMessages = loadMessagesFromStorage(mode)
+    setMessages(loadedMessages)
     setError(null)
     setLoading(false)
+    setLastAnimatedId(null)
     loadingRef.current = false
   }, [mode])
 
   useEffect(() => {
-    if (!mode) {
-      return
+    if (messages.length > 0) {
+      saveMessagesToStorage(messages)
     }
-
-    saveChatMessages(mode, messages)
-  }, [messages, mode])
+  }, [messages])
 
   async function sendMessage(text) {
     if (loadingRef.current) return
@@ -67,8 +90,8 @@ export default function useChat(mode) {
 
     const userMessage = {
       id: `user-${Date.now()}`,
-      author: "user",
-      text,
+      role: "user",
+      content: text,
     }
     setMessages((prev) => [...prev, userMessage])
 
@@ -76,12 +99,13 @@ export default function useChat(mode) {
       const response = await sendChatMessage(text)
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
-        author: "assistant",
-        text: response.answer || "Відповідь не знайдена. Спробуйте інше запитання.",
+        role: "assistant",
+        content: response.answer || "Відповідь не знайдена. Спробуйте інше запитання.",
         sources: response.sources || [],
       }
       setMessages((prev) => [...prev, assistantMessage])
-    } catch {
+      setLastAnimatedId(assistantMessage.id)
+    } catch (err) {
       setError(
         "Не вдалося отримати відповідь від сервера. Перевірте, чи запущено backend та проксі /api."
       )
@@ -91,10 +115,19 @@ export default function useChat(mode) {
     }
   }
 
+  function clearChat() {
+    const introMessage = getIntroMessage(mode)
+    setMessages([introMessage])
+    localStorage.removeItem(STORAGE_KEY)
+    setLastAnimatedId(null)
+  }
+
   return {
     messages,
     loading,
     error,
     sendMessage,
+    clearChat,
+    lastAnimatedId,
   }
 }
