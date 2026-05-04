@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { sendChatMessage } from "../api/chatApi"
+import { loadChatMessages, saveChatMessages } from "../utils/chatStorage"
 
 function getIntroText(mode) {
   if (mode === "applicant") {
@@ -13,8 +14,24 @@ function getIntroText(mode) {
   return "Вітаю! Я CampusMate AI. Питайте про вступ, студентське життя та навчальні дати."
 }
 
+function buildIntroMessage(mode) {
+  return {
+    id: `intro-${mode}`,
+    author: "assistant",
+    text: getIntroText(mode),
+    sources: [],
+  }
+}
+
 export default function useChat(mode) {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(() => {
+    if (!mode) {
+      return []
+    }
+
+    const storedMessages = loadChatMessages(mode)
+    return storedMessages.length > 0 ? storedMessages : [buildIntroMessage(mode)]
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const loadingRef = useRef(false)
@@ -25,18 +42,20 @@ export default function useChat(mode) {
       return
     }
 
-    setMessages([
-      {
-        id: `intro-${mode}`,
-        author: "assistant",
-        text: getIntroText(mode),
-        sources: [],
-      },
-    ])
+    const storedMessages = loadChatMessages(mode)
+    setMessages(storedMessages.length > 0 ? storedMessages : [buildIntroMessage(mode)])
     setError(null)
     setLoading(false)
     loadingRef.current = false
   }, [mode])
+
+  useEffect(() => {
+    if (!mode) {
+      return
+    }
+
+    saveChatMessages(mode, messages)
+  }, [messages, mode])
 
   async function sendMessage(text) {
     if (loadingRef.current) return
@@ -62,9 +81,9 @@ export default function useChat(mode) {
         sources: response.sources || [],
       }
       setMessages((prev) => [...prev, assistantMessage])
-    } catch (err) {
+    } catch {
       setError(
-        "Не вдалося отримати відповідь від сервера. Перевірте, чи запущено backend на localhost:8000."
+        "Не вдалося отримати відповідь від сервера. Перевірте, чи запущено backend та проксі /api."
       )
     } finally {
       loadingRef.current = false

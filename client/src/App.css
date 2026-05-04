@@ -320,10 +320,36 @@ body {
   background: #f8fafc;
 }
 
+.calendar-cell.has-events {
+  position: relative;
+  border-color: #bfdbfe;
+  background: #eef6ff;
+}
+
+.calendar-cell.has-events span:first-child {
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-dot {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: #0ea5e9;
+}
+
 .calendar-cell.selected {
   background: #2563eb;
   color: white;
   border-color: #1d4ed8;
+}
+
+.calendar-cell.selected .calendar-dot {
+  background: white;
 }
 
 .selected-copy {

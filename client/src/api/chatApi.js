@@ -1,4 +1,4 @@
-const USE_MOCK_API = true
+const USE_MOCK_API = false
 const MOCK_RESPONSE = {
   answer:
     "Це mock-відповідь CampusMate AI. У реальному режимі відповідь буде сформована через RAG + FAISS.",

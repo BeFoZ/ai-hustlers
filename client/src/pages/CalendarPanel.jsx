@@ -1,64 +1,36 @@
-import { useMemo, useEffect, useState } from "react"
+import { useMemo, useState } from "react"
+import calendarEvents from "../data/calendarEvents.json"
 
 const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
+
+function toDateKey(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
 
 export default function CalendarPanel() {
   const today = useMemo(() => new Date(), [])
   const [selectedDate, setSelectedDate] = useState(today)
-  const [events, setEvents] = useState([])
-  const [eventsLoading, setEventsLoading] = useState(false)
-  const [eventsError, setEventsError] = useState(null)
 
   const year = today.getFullYear()
   const month = today.getMonth()
   const monthName = today.toLocaleString("uk-UA", { month: "long" })
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7
-
   const days = Array.from({ length: daysInMonth }, (_, index) => index + 1)
 
-  const selectedDateKey = useMemo(() => {
-    const year = selectedDate.getFullYear()
-    const month = String(selectedDate.getMonth() + 1).padStart(2, "0")
-    const day = String(selectedDate.getDate()).padStart(2, "0")
-    return `${year}-${month}-${day}`
-  }, [selectedDate])
+  const selectedDateKey = useMemo(() => toDateKey(selectedDate), [selectedDate])
 
-  useEffect(() => {
-    let cancelled = false
+  const eventsByDate = useMemo(() => {
+    return calendarEvents.reduce((accumulator, item) => {
+      accumulator[item.date] = item.events ?? []
+      return accumulator
+    }, {})
+  }, [])
 
-    async function loadEvents() {
-      setEventsLoading(true)
-      setEventsError(null)
-
-      try {
-        const response = await fetch(`/api/calendar-events?date=${selectedDateKey}`)
-        if (!response.ok) {
-          throw new Error("Server error")
-        }
-
-        const payload = await response.json()
-        if (!cancelled) {
-          setEvents(payload.events ?? [])
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setEventsError("Не вдалося завантажити події. Спробуйте пізніше.")
-          setEvents([])
-        }
-      } finally {
-        if (!cancelled) {
-          setEventsLoading(false)
-        }
-      }
-    }
-
-    loadEvents()
-
-    return () => {
-      cancelled = true
-    }
-  }, [selectedDateKey])
+  const events = eventsByDate[selectedDateKey] ?? []
 
   const selectedLabel = selectedDate.toLocaleDateString("uk-UA", {
     weekday: "long",
@@ -74,14 +46,14 @@ export default function CalendarPanel() {
           <p className="eyebrow">Календар</p>
           <h2>Головні дати</h2>
           <p className="panel-copy">
-            Швидкий огляд подій, сесій та дедлайнів для студентів ІФНТУНГ.
+            Швидкий огляд подій, дедлайнів та важливих активностей для студентів ІФНТУНГ.
           </p>
         </div>
         <div className="calendar-meta">
           <span className="calendar-month">
             {monthName} {year}
           </span>
-          <p>Оберіть день, щоб виділити дату.</p>
+          <p>Оберіть день, щоб переглянути заплановані події.</p>
         </div>
       </div>
 
@@ -100,19 +72,20 @@ export default function CalendarPanel() {
           ))}
 
           {days.map((day) => {
-            const isSelected =
-              selectedDate.getDate() === day &&
-              selectedDate.getMonth() === month &&
-              selectedDate.getFullYear() === year
+            const currentDate = new Date(year, month, day)
+            const currentKey = toDateKey(currentDate)
+            const isSelected = currentKey === selectedDateKey
+            const hasEvents = (eventsByDate[currentKey] ?? []).length > 0
 
             return (
               <button
                 key={day}
                 type="button"
-                className={`calendar-cell day ${isSelected ? "selected" : ""}`}
-                onClick={() => setSelectedDate(new Date(year, month, day))}
+                className={`calendar-cell day ${isSelected ? "selected" : ""} ${hasEvents ? "has-events" : ""}`}
+                onClick={() => setSelectedDate(currentDate)}
               >
-                {day}
+                <span>{day}</span>
+                {hasEvents ? <span className="calendar-dot" aria-hidden="true" /> : null}
               </button>
             )
           })}
@@ -133,14 +106,10 @@ export default function CalendarPanel() {
           <span className="calendar-month">{selectedDateKey}</span>
         </div>
 
-        {eventsLoading ? (
-          <p className="event-status">Завантаження подій…</p>
-        ) : eventsError ? (
-          <p className="event-status error">{eventsError}</p>
-        ) : events.length === 0 ? (
+        {events.length === 0 ? (
           <div className="event-empty">
             <h3>Нічого не заплановано</h3>
-            <p>На обрану дату немає жодних подій. Спробуйте обрати інший день або плануйте свій час.</p>
+            <p>На цю дату подій немає. Оберіть інший день, щоб переглянути розклад.</p>
           </div>
         ) : (
           <div className="event-list">
@@ -150,7 +119,7 @@ export default function CalendarPanel() {
                 <div className="event-details">
                   <h4>{event.title}</h4>
                   <p>{event.description}</p>
-                  {event.location && <p className="event-location">{event.location}</p>}
+                  {event.location ? <p className="event-location">{event.location}</p> : null}
                 </div>
               </article>
             ))}
